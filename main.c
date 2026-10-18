@@ -201,13 +201,23 @@ int main(int argc, char * *argv) {
     int fechou = fclose(saida); saida = NULL;
     if (escrita.erro || fechou) { strcpy(erro, "Falha ao salvar saida"); goto fim; }
     double tempo_saida = agora_ms() - inicio;
-    printf("STATUS=OK\n INPUT_RECORDS=%zu\n MATCHED_RECORDS=%zu\n OUTPUT_RECORDS=%zu\n", carregados, busca.encontrados, escrita.escritos);
-    printf("LOAD_MS=%.3f\n SEARCH_MS=%.3f\nRESULT_INSERT_MS=%.3f\nWRITE_MS=%.3f \n", carga, tempo_busca, busca.insercao_ms, tempo_saida);
-    retorno = EXIT_SUCCESS;
+
+printf("STATUS=OK\n"
+       "INPUT_RECORDS=%zu\n"
+       "MATCHED_RECORDS=%zu\n"
+       "OUTPUT_RECORDS=%zu\n",
+       carregados, busca.encontrados, escrita.escritos);
+
+printf("LOAD_MS=%.3f\n"
+       "SEARCH_MS=%.3f\n"
+       "RESULT_INSERT_MS=%.3f\n"
+       "WRITE_MS=%.3f\n",
+       carga, tempo_busca, busca.insercao_ms, tempo_saida);    retorno = EXIT_SUCCESS;
 fim:
+
     if (retorno != EXIT_SUCCESS) { puts("STATUS=ERROR"); fprintf(stderr, "%s\n", erro); }
     if (saida) fclose(saida);
-    // os resultados poderiam ser apagados, mas o enunciado pede para manter os resultados, então não apaga
+ // libera a estrutura de resultados, mas nao os itens, pois eles estao na base
     estrutura_apagar(&resultado, false);
     estrutura_apagar(&base, true);
     leitor_fechar(&leitor);
