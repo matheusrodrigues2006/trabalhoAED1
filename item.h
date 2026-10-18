@@ -17,7 +17,7 @@ ITEM *item_criar(
 );
 
 // libera o item
-void item_apagar(ITEM * *item);
+void item_apagar(ITEM **item);
 
 // retorna o texto de um campo ou null se nao existir
 // aspas vazias se existir mas tiver vazio
@@ -40,6 +40,10 @@ bool item_obter_booleano(
     bool *saida
 );
 
+//define e consulta e o tipo de um campo
+void item_definir_tipo(ITEM *item, size_t indice, TIPO_CAMPO tipo);
+TIPO_CAMPO item_tipo(const ITEM *item, const char *campo);
+
 // define a similaridade
 void item_definir_similaridade(ITEM *item, double similaridade);
 //verifica a similaridade
@@ -47,5 +51,6 @@ double item_obter_similaridade(const ITEM *item);
 
 // retorna o texto original
 const char *item_obter_registro_original(const ITEM *item);
+
 
 #endif
