@@ -5,6 +5,8 @@
 #include <stddef.h>
 
 #include "item.h"
+#include "leitor.h"
+
 
 typedef struct consulta CONSULTA;
 
@@ -51,6 +53,15 @@ const char *consulta_campo_cruzamento(
     size_t indice
 );
 
+bool consulta_validar(
+    const CONSULTA *consulta, 
+    const LEITOR *leitor
+);
 
+int consulta_comparar(
+    const CONSULTA *consulta,
+    const ITEM *a,
+    const ITEM *b
+);
 
 #endif
