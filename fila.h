@@ -11,7 +11,7 @@
 typedef struct fila FILA;
 
 // cria uma fila vazia e retorna null se nao tiver memoria
-FILA *fila_criar(CONSULTA *consulta);
+FILA *fila_criar(const CONSULTA *consulta);
 
 // insere no fim da fila, retorna false se nao tiver memoria ou fila invalida
 bool fila_inserir(FILA *fila, ITEM *item);
@@ -35,6 +35,6 @@ bool fila_percorrer(
 );
 
 // libera os nos e a fila
-void fila_apagar(FILA **fila, bool apagar_itens);
+void fila_apagar(FILA *fila, bool apagar_itens);
 
 #endif
