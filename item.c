@@ -4,7 +4,6 @@
 #include "item.h"
 #include "util.h"
 
-
 struct item {
     char **nomes;
     char **valores;
@@ -19,7 +18,7 @@ ITEM *item_criar(
     const char *const valores[],
     size_t quantidade,
     const char *registro_original
-) 
+)
 {
     if (!nomes || !valores || quantidade == 0 || !registro_original) {
         return NULL;
@@ -70,7 +69,6 @@ void item_apagar(ITEM **item) {
     *item = NULL;
 }
 
-
 const char *item_obter_texto(const ITEM *item, const char *campo) {
 
     if (!item || !campo) return NULL;
@@ -80,6 +78,7 @@ const char *item_obter_texto(const ITEM *item, const char *campo) {
     return NULL;
 }
 
+// definimos o tipo de um campo específico em um itempara saber se é texto, número ou booleano
 void item_definir_tipo(ITEM *item, size_t indice, TIPO_CAMPO tipo) {
     if (item && indice < item->quantidade) {
         item->tipos[indice] = tipo;
@@ -94,8 +93,6 @@ bool item_obter_booleano(const ITEM *item, const char *campo, bool *saida) {
     return texto_booleano(item_obter_texto(item, campo), saida);
 }
 
-
-
 TIPO_CAMPO item_tipo(const ITEM *item, const char *campo) {
     if (item && campo) for (size_t i = 0; i < item->quantidade; i++)
         if (!strcmp(item->nomes[i], campo)) return item->tipos[i];
@@ -106,8 +103,6 @@ void item_definir_similaridade(ITEM *item, double valor) { if (item) item->simil
 
 double item_obter_similaridade(const ITEM *item) { return item ? item->similaridade : 0; }
 
+
 const char *item_obter_registro_original(const ITEM *item) { return item ? item->registro_original : NULL; }
-
-
-
 

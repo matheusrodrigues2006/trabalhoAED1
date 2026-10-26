@@ -7,7 +7,6 @@
 #include "item.h"
 #include "leitor.h"
 
-
 typedef struct consulta CONSULTA;
 
 // le o arquivo e cria a consulta, retornando NULL se tiver erro
@@ -18,16 +17,16 @@ CONSULTA *consulta_carregar(
 );
 
 // libera a memoria da consulta e coloca o ponteiro em NULL
-void consulta_apagar(CONSULTA * *consulta);
+void consulta_apagar(CONSULTA **consulta);
 
-// verifica todos os filtros e checa se o item atende a todos eles, retornando true se sim
+// Aplica os filtros e o limiar de similaridade; informa a nota calculada.
 bool consulta_avaliar(
     const CONSULTA *consulta,
     const ITEM *item,
     double *similaridade
 );
 
-// obtem o campo de order 
+// obtem o campo de order
 const char *consulta_campo_ordem(const CONSULTA *consulta);
 
 // verifica se a ordem é decrescente, retornando true se sim
@@ -36,7 +35,7 @@ bool consulta_ordem_decrescente(const CONSULTA *consulta);
 // quantidade de campos de GROUP, retornando 0 se nao houver GROUP
 size_t consulta_total_grupos(const CONSULTA *consulta);
 
-// obtem um campo de group pelo indice 
+// obtem um campo de group pelo indice
 const char *consulta_campo_grupo(
     const CONSULTA *consulta,
     size_t indice
@@ -54,7 +53,7 @@ const char *consulta_campo_cruzamento(
 );
 
 bool consulta_validar(
-    const CONSULTA *consulta, 
+    const CONSULTA *consulta,
     const LEITOR *leitor
 );
 

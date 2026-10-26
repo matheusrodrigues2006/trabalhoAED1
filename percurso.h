@@ -2,6 +2,6 @@
 #define PERCURSO_H
 #include "item.h"
 
-// retornar flase interrompe o percurso, true continua
+// A visita retorna false para interromper o percurso.
 typedef bool (*VISITA)(ITEM *item, void *contexto);
 #endif

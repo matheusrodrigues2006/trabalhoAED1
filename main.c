@@ -8,14 +8,11 @@
 #include <errno.h>
 #include <stdint.h>
 
-
-// 
 typedef struct {
     const char *reader, *input, *base, *result, *query, *output;
     size_t top_k, limit;
 
 } ARGUMENTOS;
-
 
 typedef struct {
     const CONSULTA *consulta;
@@ -25,13 +22,14 @@ typedef struct {
     bool erro;
 } BUSCA;
 
-
-
-typedef struct { FILE *arquivo; size_t limite, escritos; bool erro; } SAIDA;
-
+typedef struct {
+    FILE *arquivo;
+    size_t limite, escritos;
+    bool erro;
+} SAIDA;
 
 static double agora_ms(void) {
-    
+
     struct timespec t;
     timespec_get(&t, TIME_UTC);
     return (double)t.tv_sec * 1000 + (double)t.tv_nsec / 1000000;
@@ -51,14 +49,13 @@ static bool ler_tamanho(const char *texto, size_t *valor) {
     *valor = (size_t)n; return true;
 }
 
-
-static bool argumentos(int argc, char * *argv, ARGUMENTOS *a) {
+static bool argumentos(int argc, char **argv, ARGUMENTOS *a) {
     const char *nomes[] = {"--reader", "--input", "--base", "--result", "--query", "--output", "--top-k", "--limit"};
 
     bool usados[8] = {false};
 
-    for (int i = 1 ; i < argc ; i += 2) {
-        if (i + 1 >= argc ) return false;
+    for (int i = 1; i < argc; i += 2) {
+        if (i + 1 >= argc) return false;
         size_t j = 0;
 
         while (j < 8 && strcmp(argv[i], nomes[j])) j++;
@@ -85,11 +82,10 @@ static bool argumentos(int argc, char * *argv, ARGUMENTOS *a) {
     return strcmp(a->input, a->output) != 0 && strcmp(a->query, a->output) != 0;
 }
 
-
+// O percurso chama esta funcao para avaliar cada registro da base.
 static bool buscar(ITEM *item, void *contexto) {
     BUSCA *b = contexto;
     double similaridade;
-
 
     if (consulta_avaliar(b->consulta, item, &similaridade)) {
         item_definir_similaridade(item, similaridade);
@@ -104,7 +100,6 @@ static bool buscar(ITEM *item, void *contexto) {
     return true;
 }
 
-
 static bool escrever(ITEM *item, void *contexto) {
     SAIDA *s = contexto;
 
@@ -114,7 +109,7 @@ static bool escrever(ITEM *item, void *contexto) {
 
     size_t n = strlen(texto);
 
-    if ( fputs(texto, s->arquivo) == EOF ||
+    if (fputs(texto, s->arquivo) == EOF ||
         (n && texto[n - 1] != '\n' && fputc('\n', s->arquivo) == EOF)) {
         s->erro = true; return false;
     }
@@ -123,8 +118,7 @@ static bool escrever(ITEM *item, void *contexto) {
     return !s->limite || s->escritos < s->limite;
 }
 
-
-int main(int argc, char * *argv) {
+int main(int argc, char **argv) {
 
     ARGUMENTOS a = {0};
 
@@ -156,7 +150,7 @@ int main(int argc, char * *argv) {
 
     resultado = estrutura_criar(a.result, consulta);
 
-    if (!base || !resultado) { strcpy( erro, "Estrutura invalida, falta de memoria ou GROUP/CROSS ausente"); goto fim; }
+    if (!base || !resultado) { strcpy(erro, "Estrutura invalida, falta de memoria ou GROUP/CROSS ausente"); goto fim; }
 
     size_t carregados = 0;
 
@@ -166,7 +160,7 @@ int main(int argc, char * *argv) {
         int status = leitor_proximo(leitor, &item);
         if (!status) break;
 
-        if (status < 0 ) { strcpy(erro, "Falha ao ler registro CSV"); goto fim; }
+        if (status < 0) { strcpy(erro, "Falha ao ler registro CSV"); goto fim; }
         const char *ordem = consulta_campo_ordem(consulta);
         if (!strcmp(a.base, "lista_ord") && (!ordem || !strcmp(ordem, "similarity"))) {
             double nota;
@@ -185,6 +179,7 @@ int main(int argc, char * *argv) {
     BUSCA busca = {consulta, resultado, 0, 0, false};
     inicio = agora_ms();
     estrutura_percorrer(base, buscar, &busca);
+    // Desconta a insercao para nao contar esse tempo duas vezes.
     double tempo_busca = agora_ms() - inicio - busca.insercao_ms;
 
     if (tempo_busca < 0) tempo_busca = 0;
@@ -195,6 +190,7 @@ int main(int argc, char * *argv) {
 
     if (!saida || !leitor_cabecalho(leitor, saida)) { strcpy(erro, "Falha ao abrir ou escrever saida"); goto fim; }
 
+    // O limite afeta a escrita; todos os aceitos ja estao no resultado.
     SAIDA escrita = {saida, a.top_k, 0, false};
 
     estrutura_percorrer(resultado, escrever, &escrita);
@@ -202,22 +198,23 @@ int main(int argc, char * *argv) {
     if (escrita.erro || fechou) { strcpy(erro, "Falha ao salvar saida"); goto fim; }
     double tempo_saida = agora_ms() - inicio;
 
-printf("STATUS=OK\n"
-       "INPUT_RECORDS=%zu\n"
-       "MATCHED_RECORDS=%zu\n"
-       "OUTPUT_RECORDS=%zu\n",
-       carregados, busca.encontrados, escrita.escritos);
+    printf("STATUS=OK\n"
+           "INPUT_RECORDS=%zu\n"
+           "MATCHED_RECORDS=%zu\n"
+           "OUTPUT_RECORDS=%zu\n",
+           carregados, busca.encontrados, escrita.escritos);
 
-printf("LOAD_MS=%.3f\n"
-       "SEARCH_MS=%.3f\n"
-       "RESULT_INSERT_MS=%.3f\n"
-       "WRITE_MS=%.3f\n",
-       carga, tempo_busca, busca.insercao_ms, tempo_saida);    retorno = EXIT_SUCCESS;
+    printf("LOAD_MS=%.3f\n"
+           "SEARCH_MS=%.3f\n"
+           "RESULT_INSERT_MS=%.3f\n"
+           "WRITE_MS=%.3f\n",
+           carga, tempo_busca, busca.insercao_ms, tempo_saida);
+    retorno = EXIT_SUCCESS;
 fim:
 
     if (retorno != EXIT_SUCCESS) { puts("STATUS=ERROR"); fprintf(stderr, "%s\n", erro); }
     if (saida) fclose(saida);
- // libera a estrutura de resultados, os itens pertencem a base e nao devem ser apagados
+    // Libera os nos do resultado antes dos itens, que pertencem a base.
     estrutura_apagar(&resultado, false);
     estrutura_apagar(&base, true);
     leitor_fechar(&leitor);

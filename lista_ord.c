@@ -9,7 +9,7 @@ LISTA_ORD *lista_ord_criar(const CONSULTA *consulta) {
     LISTA_ORD *e = calloc(1, sizeof *e);
     if (!e) return NULL;
     e->consulta = consulta;
-    
+
     return e;
 }
 
@@ -18,7 +18,7 @@ bool lista_ord_inserir(LISTA_ORD *e, ITEM *item) {
     NO *novo = malloc(sizeof *novo);
     if (!novo) return false;
     novo->item = item; novo->proximo = NULL;
-    // acha a poscao correta antes de inserir
+    // Encontra a posicao correta antes de inserir.
     NO **pos = &e->inicio;
     while (*pos && consulta_comparar(e->consulta, (*pos)->item, item) <= 0)
         pos = &(*pos)->proximo;
@@ -49,6 +49,6 @@ void lista_ord_apagar(LISTA_ORD *e, bool apagar_itens) {
     if (!e) return;
     ITEM *item;
     while ((item = lista_ord_remover(e))) if (apagar_itens) item_apagar(&item);
-    
+
     free(e);
 }

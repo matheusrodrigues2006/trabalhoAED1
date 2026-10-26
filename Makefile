@@ -5,4 +5,6 @@ run: all
 	./trabalho $(ARGS)
 
 clean:
-	rm -f trabalho trabalho.exe
+	rm -f trabalho trabalho.exe *.o
+
+.PHONY: all run clean

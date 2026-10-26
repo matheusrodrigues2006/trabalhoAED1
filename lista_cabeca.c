@@ -6,7 +6,7 @@ typedef struct no { ITEM *item; struct no *proximo; } NO;
 struct lista_cabeca { NO *cabeca, *fim; const CONSULTA *consulta; };
 
 LISTA_CABECA *lista_cabeca_criar(const CONSULTA *consulta) {
-    
+
     LISTA_CABECA *e = calloc(1, sizeof *e);
     if (!e) return NULL;
     e->consulta = consulta;

@@ -12,5 +12,4 @@ ITEM *lista_seq_remover(LISTA_SEQ *estrutura);
 bool lista_seq_percorrer(const LISTA_SEQ *estrutura, VISITA visitar, void *contexto);
 void lista_seq_apagar(LISTA_SEQ *estrutura, bool apagar_itens);
 
-
 #endif

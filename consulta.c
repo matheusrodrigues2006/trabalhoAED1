@@ -35,7 +35,7 @@ static bool comparar_operador(int cmp, const char *op) {
     return cmp >= 0;
 }
 
-static bool processar(CONSULTA *c, char * *p, size_t n) {
+static bool processar(CONSULTA *c, char **p, size_t n) {
     if (!strcmp(p[0], "FILTER") && n == 4 && operador_valido(p[2])) {
         FILTRO *novo = realloc(c->filtros, (c->quantidade_filtros + 1) * sizeof *novo);
         if (!novo) return false;
@@ -195,7 +195,7 @@ int consulta_comparar(const CONSULTA *c, const ITEM *a, const ITEM *b) {
     return c->decrescente ? -cmp : cmp;
 }
 
-void consulta_apagar(CONSULTA * *c) {
+void consulta_apagar(CONSULTA **c) {
     if (!c || !*c) return;
     for (size_t i = 0; i < (*c)->quantidade_filtros; i++) {
         free((*c)->filtros[i].campo); free((*c)->filtros[i].operador); free((*c)->filtros[i].valor);

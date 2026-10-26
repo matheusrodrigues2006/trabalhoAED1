@@ -13,37 +13,37 @@ struct leitor {
 };
 
 // Le um registro completo, incluindo quebras dentro de aspas
-static int ler_registro(FILE *arq, char * *saida) {
+static int ler_registro(FILE *arq, char **saida) {
 
     size_t n = 0, capacidade = 256;
 
     char *texto = malloc(capacidade);
     bool aspas = false;
     int c;
-    if (!texto) return - 1;
+    if (!texto) return -1;
 
     while ((c = fgetc(arq)) != EOF) {
         if (n + 1 >= capacidade) {
             capacidade *= 2;
             char *novo = realloc(texto, capacidade);
-            if (!novo) { free(texto); return - 1; }
+            if (!novo) { free(texto); return -1; }
             texto = novo;
         }
         texto[n++] = (char)c;
         if (c == '"') aspas = !aspas;
         if (c == '\n' && !aspas) break;
     }
-    if (ferror(arq) || aspas) { free(texto); return - 1; }
+    if (ferror(arq) || aspas) { free(texto); return -1; }
     if (!n) { free(texto); return 0; }
     texto[n] = '\0'; *saida = texto; return 1;
 }
 
-static void apagar_campos(char * *campos, size_t n) {
+static void apagar_campos(char **campos, size_t n) {
     for (size_t i = 0; i < n; i++) free(campos[i]);
     free(campos);
 }
 
-static bool separar(const char *texto, char delimitador, char * **saida, size_t *quantidade) {
+static bool separar(const char *texto, char delimitador, char ***saida, size_t *quantidade) {
     size_t n = strlen(texto), pos = 0, total = 0;
     while (n && (texto[n - 1] == '\n' || texto[n - 1] == '\r')) n--;
     char **campos = NULL;
@@ -122,7 +122,7 @@ erro:
     leitor_fechar(&l); return NULL;
 }
 
-int leitor_proximo(LEITOR *l, ITEM * *item) {
+int leitor_proximo(LEITOR *l, ITEM **item) {
 
     char *texto = NULL, **valores = NULL;
     size_t n = 0;
@@ -130,7 +130,7 @@ int leitor_proximo(LEITOR *l, ITEM * *item) {
     int status = ler_registro(l->arquivo, &texto);
     if (status != 1) return status;
     if (!separar(texto, l->delimitador, &valores, &n) || n != l->quantidade) {
-        free(texto); apagar_campos(valores, n); return - 1;
+        free(texto); apagar_campos(valores, n); return -1;
     }
     /* Normaliza apenas a copia dos campos; o registro exportado permanece original. */
     if (l->anp) {

@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct lista_seq { ITEM * *itens; size_t quantidade, capacidade; };
+struct lista_seq { ITEM **itens; size_t quantidade, capacidade; };
 
 LISTA_SEQ *lista_seq_criar(const CONSULTA *consulta) {
     (void)consulta;

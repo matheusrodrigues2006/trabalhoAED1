@@ -9,7 +9,7 @@ PILHA *pilha_criar(const CONSULTA *consulta) {
     PILHA *e = calloc(1, sizeof *e);
     if (!e) return NULL;
     e->consulta = consulta;
-    
+
     return e;
 }
 
@@ -26,7 +26,7 @@ bool pilha_inserir(PILHA *e, ITEM *item) {
 }
 
 ITEM *pilha_remover(PILHA *e) {
-    
+
     if (!e || !e->inicio) return NULL;
     NO *no = e->inicio;
     ITEM *item = no->item;
@@ -35,7 +35,6 @@ ITEM *pilha_remover(PILHA *e) {
     free(no); return item;
 }
 
-
 bool pilha_percorrer(const PILHA *e, VISITA visitar, void *contexto) {
     if (!e || !visitar) return false;
     for (NO *no = e->inicio; no; no = no->proximo)
@@ -43,11 +42,10 @@ bool pilha_percorrer(const PILHA *e, VISITA visitar, void *contexto) {
     return true;
 }
 
-
 void pilha_apagar(PILHA *e, bool apagar_itens) {
     if (!e) return;
     ITEM *item;
     while ((item = pilha_remover(e))) if (apagar_itens) item_apagar(&item);
-    
+
     free(e);
 }

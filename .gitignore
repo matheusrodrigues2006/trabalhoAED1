@@ -1,8 +1,25 @@
+# Arquivos gerados pela compilacao
+/trabalho
+*.exe
 *.o
 *.obj
-*.exe
-/trabalho
-/build
-/dados
+
+# Dados e arquivos usados nas execucoes locais
+/dados/
+/consultas/
 /resultados/
-/descricao-projeto.pdf
+/*.csv
+/*.txt
+
+# Material de apoio e relatorios, mantidos fora do codigo
+/testes/
+/scripts/
+/experimentos/
+/relatorios/
+/ALTERACOES.md
+/descricao-projeto*.pdf
+/*.zip
+
+# Configuracoes locais de editores
+/.vscode/
+/.idea/

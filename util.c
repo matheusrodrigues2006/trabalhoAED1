@@ -5,14 +5,12 @@
 #include <errno.h>
 #include <math.h>
 
-
 char *texto_copiar(const char *texto) {
     if (!texto) return NULL;
     char *copia = malloc(strlen(texto) + 1);
     if (copia) strcpy(copia, texto);
     return copia;
 }
-
 
 bool texto_numero(const char *texto, double *saida) {
     if (!texto || !saida) return false;

@@ -21,7 +21,7 @@ LISTA_CRUZ *lista_cruz_criar(const CONSULTA *consulta) {
     return l;
 }
 
-static GRUPO *obter_grupo(GRUPO * *inicio, const char *chave) {
+static GRUPO *obter_grupo(GRUPO **inicio, const char *chave) {
 
     while (*inicio && strcmp((*inicio)->chave, chave)) inicio = &(*inicio)->proximo;
     if (!*inicio) {

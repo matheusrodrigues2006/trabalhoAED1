@@ -8,10 +8,11 @@ FILA *fila_criar(const CONSULTA *consulta) {
     FILA *e = calloc(1, sizeof *e);
     if (!e) return NULL;
     e->consulta = consulta;
-    
+
     return e;
 }
 
+// Funções de inserção, remoção, percorrimento e liberação de memória para a fila
 bool fila_inserir(FILA *e, ITEM *item) {
     if (!e || !item) return false;
     NO *novo = malloc(sizeof *novo);
@@ -43,6 +44,6 @@ void fila_apagar(FILA *e, bool apagar_itens) {
     if (!e) return;
     ITEM *item;
     while ((item = fila_remover(e))) if (apagar_itens) item_apagar(&item);
-    
+
     free(e);
 }

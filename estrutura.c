@@ -73,7 +73,7 @@ bool estrutura_percorrer(const ESTRUTURA *e, VISITA visitar, void *contexto) {
     }
 }
 
-void estrutura_apagar(ESTRUTURA * *e, bool apagar_itens) {
+void estrutura_apagar(ESTRUTURA **e, bool apagar_itens) {
     if (!e || !*e) return;
     switch ((*e)->tipo) {
         case 0: pilha_apagar((*e)->dados, apagar_itens); break;

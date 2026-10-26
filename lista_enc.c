@@ -9,7 +9,7 @@ LISTA_ENC *lista_enc_criar(const CONSULTA *consulta) {
     LISTA_ENC *e = calloc(1, sizeof *e);
     if (!e) return NULL;
     e->consulta = consulta;
-    
+
     return e;
 }
 
@@ -44,6 +44,6 @@ void lista_enc_apagar(LISTA_ENC *e, bool apagar_itens) {
     if (!e) return;
     ITEM *item;
     while ((item = lista_enc_remover(e))) if (apagar_itens) item_apagar(&item);
-    
+
     free(e);
 }
