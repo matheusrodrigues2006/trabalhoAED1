@@ -15,6 +15,7 @@ LISTA_CABECA *lista_cabeca_criar(const CONSULTA *consulta) {
     e->fim = e->cabeca;
     return e;
 }
+
 bool lista_cabeca_inserir(LISTA_CABECA *e, ITEM *item) {
     if (!e || !item) return false;
     NO *novo = malloc(sizeof *novo);

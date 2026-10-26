@@ -8,6 +8,8 @@ struct leitor {
     char *cabecalho;
     char **nomes;
     size_t quantidade;
+    bool anp;
+    char delimitador;
 };
 
 // Le um registro completo, incluindo quebras dentro de aspas
@@ -41,7 +43,7 @@ static void apagar_campos(char * *campos, size_t n) {
     free(campos);
 }
 
-static bool separar(const char *texto, char * **saida, size_t *quantidade) {
+static bool separar(const char *texto, char delimitador, char * **saida, size_t *quantidade) {
     size_t n = strlen(texto), pos = 0, total = 0;
     while (n && (texto[n - 1] == '\n' || texto[n - 1] == '\r')) n--;
     char **campos = NULL;
@@ -57,9 +59,9 @@ static bool separar(const char *texto, char * **saida, size_t *quantidade) {
                     else { pos++; fechou = true; break; }
                 } else valor[k++] = texto[pos++];
             }
-            if (!fechou || (pos < n && texto[pos] != ',')) { free(valor); goto erro; }
+            if (!fechou || (pos < n && texto[pos] != delimitador)) { free(valor); goto erro; }
         } else {
-            while (pos < n && texto[pos] != ',') {
+            while (pos < n && texto[pos] != delimitador) {
                 if (texto[pos] == '"') { free(valor); goto erro; }
                 valor[k++] = texto[pos++];
             }
@@ -77,7 +79,11 @@ erro:
 }
 
 TIPO_CAMPO leitor_tipo(const LEITOR *leitor, const char *campo) {
-    (void)leitor;
+    if (!leitor || !campo) return CAMPO_TEXTO;
+    if (leitor->anp) {
+        return !strcmp(campo, "ANO") || !strcmp(campo, "VENDAS")
+            ? CAMPO_NUMERO : CAMPO_TEXTO;
+    }
     const char *numeros[] = {"year", "month", "distance_au", "velocity_km_s", "absolute_magnitude",
         "days_until_approach", "risk_score", "panic_level", "sentry_impact_prob",
         "sentry_torino_scale", "sentry_palermo_scale", "sentry_diameter_km"};
@@ -91,17 +97,25 @@ TIPO_CAMPO leitor_tipo(const LEITOR *leitor, const char *campo) {
 }
 
 LEITOR *leitor_abrir(const char *caminho, const char *nome) {
-    if (!caminho || !nome || strcmp(nome, "nasa")) return NULL;
+    if (!caminho || !nome || (strcmp(nome, "nasa") && strcmp(nome, "anp"))) return NULL;
     LEITOR *l = calloc(1, sizeof *l);
     if (!l) return NULL;
+    l->anp = !strcmp(nome, "anp");
+    l->delimitador = l->anp ? ';' : ',';
     l->arquivo = fopen(caminho, "rb");
     if (!l->arquivo || ler_registro(l->arquivo, &l->cabecalho) != 1) goto erro;
     const char *inicio = l->cabecalho;
     if (strlen(inicio) >= 3 && !memcmp(inicio, "\xef\xbb\xbf", 3)) inicio += 3;
-    if (!separar(inicio, &l->nomes, &l->quantidade)) goto erro;
+    if (!separar(inicio, l->delimitador, &l->nomes, &l->quantidade)) goto erro;
     for (size_t i = 0; i < l->quantidade; i++) {
         if (!*l->nomes[i]) goto erro;
         for (size_t j = 0; j < i; j++) if (!strcmp(l->nomes[i], l->nomes[j])) goto erro;
+    }
+    if (l->anp) {
+        const char *obrigatorios[] = {"ANO", "MÊS", "GRANDE REGIÃO",
+            "UNIDADE DA FEDERAÇÃO", "PRODUTO", "VENDAS"};
+        for (size_t i = 0; i < sizeof obrigatorios / sizeof *obrigatorios; i++)
+            if (!leitor_tem_campo(l, obrigatorios[i])) goto erro;
     }
     return l;
 erro:
@@ -115,8 +129,17 @@ int leitor_proximo(LEITOR *l, ITEM * *item) {
     *item = NULL;
     int status = ler_registro(l->arquivo, &texto);
     if (status != 1) return status;
-    if (!separar(texto, &valores, &n) || n != l->quantidade) {
+    if (!separar(texto, l->delimitador, &valores, &n) || n != l->quantidade) {
         free(texto); apagar_campos(valores, n); return - 1;
+    }
+    /* Normaliza apenas a copia dos campos; o registro exportado permanece original. */
+    if (l->anp) {
+        for (size_t i = 0; i < n; i++) {
+            if (!strcmp(l->nomes[i], "VENDAS")) {
+                for (char *p = valores[i]; *p; p++)
+                    if (*p == ',') *p = '.';
+            }
+        }
     }
     * item = item_criar((const char *const * )l->nomes, (const char *const * )valores, n, texto);
     if (*item) for (size_t i = 0; i < n; i++) item_definir_tipo(*item, i, leitor_tipo(l, l->nomes[i]));

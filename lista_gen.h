@@ -2,6 +2,7 @@
 #define LISTA_GEN_H
 #include "consulta.h"
 #include "percurso.h"
+
 typedef struct lista_gen LISTA_GEN;
 LISTA_GEN *lista_gen_criar(const CONSULTA *consulta);
 bool lista_gen_inserir(LISTA_GEN *estrutura, ITEM *item);

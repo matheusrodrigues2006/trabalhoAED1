@@ -19,14 +19,6 @@ bool fila_inserir(FILA *fila, ITEM *item);
 // remove e retorna o primeiro item da fila
 ITEM *fila_remover(FILA *fila);
 
-// apenas consulta o primiero item sem remover
-ITEM *fila_frente(const FILA *fila);
-// verifica e retorna true se a fila estiver vazia
-bool fila_vazia(const FILA *fila);
-
-//retorna o tamanho da fila
-size_t fila_tamanho(const FILA *fila);
-
 // visita todos os itens
 bool fila_percorrer(
     const FILA *fila,

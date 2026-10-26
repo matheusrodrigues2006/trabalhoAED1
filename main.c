@@ -135,7 +135,7 @@ int main(int argc, char * *argv) {
     char erro[256] = "Argumentos invalidos";
     int retorno = EXIT_FAILURE;
     if (argc == 2 && !strcmp(argv[1], "--help")) {
-        puts("./trabalho --reader nasa --input dados.csv --base lista_enc --result lista_ord --query consulta.txt --output resultado.csv [--top-k 0] [--limit 0]");
+        puts("./trabalho --reader nasa|anp --input dados.csv --base lista_enc --result lista_ord --query consulta.txt --output resultado.csv [--top-k 0] [--limit 0]");
         return EXIT_SUCCESS;
     }
     if (!argumentos(argc, argv, &a)) goto fim;
@@ -217,7 +217,7 @@ fim:
 
     if (retorno != EXIT_SUCCESS) { puts("STATUS=ERROR"); fprintf(stderr, "%s\n", erro); }
     if (saida) fclose(saida);
- // libera a estrutura de resultados, mas nao os itens, pois eles estao na base
+ // libera a estrutura de resultados, os itens pertencem a base e nao devem ser apagados
     estrutura_apagar(&resultado, false);
     estrutura_apagar(&base, true);
     leitor_fechar(&leitor);

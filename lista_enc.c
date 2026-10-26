@@ -4,6 +4,7 @@
 typedef struct no { ITEM *item; struct no *proximo; } NO;
 
 struct lista_enc { NO *inicio, *fim; const CONSULTA *consulta; };
+
 LISTA_ENC *lista_enc_criar(const CONSULTA *consulta) {
     LISTA_ENC *e = calloc(1, sizeof *e);
     if (!e) return NULL;

@@ -30,7 +30,7 @@ bool consulta_avaliar(
 // obtem o campo de order 
 const char *consulta_campo_ordem(const CONSULTA *consulta);
 
-// verifica se a ordem é crescente, retornando true se sim
+// verifica se a ordem é decrescente, retornando true se sim
 bool consulta_ordem_decrescente(const CONSULTA *consulta);
 
 // quantidade de campos de GROUP, retornando 0 se nao houver GROUP

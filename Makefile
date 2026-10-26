@@ -1,7 +1,8 @@
 all:
 	gcc -std=c11 -Wall -Wextra -pedantic *.c -o trabalho -lm
 
-clean:
-	rm -f trabalho trabalho.exe *.o
+run: all
+	./trabalho $(ARGS)
 
-.PHONY: all clean
+clean:
+	rm -f trabalho trabalho.exe

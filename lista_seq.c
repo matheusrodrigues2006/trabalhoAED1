@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct lista_seq { ITEM **itens; size_t quantidade, capacidade; };
+struct lista_seq { ITEM * *itens; size_t quantidade, capacidade; };
 
 LISTA_SEQ *lista_seq_criar(const CONSULTA *consulta) {
     (void)consulta;
@@ -13,8 +13,8 @@ LISTA_SEQ *lista_seq_criar(const CONSULTA *consulta) {
 bool lista_seq_inserir(LISTA_SEQ *e, ITEM *item) {
     if (!e || !item) return false;
     if (e->quantidade == e->capacidade) {
-        size_t capacidade = e->capacidade ? e->capacidade*2 : 16;
-        ITEM **novo = realloc(e->itens, capacidade*sizeof *novo);
+        size_t capacidade = e->capacidade ? e->capacidade * 2 : 16;
+        ITEM **novo = realloc(e->itens, capacidade * sizeof *novo);
         if (!novo) return false;
         e->itens = novo; e->capacidade = capacidade;
     }
@@ -25,14 +25,14 @@ ITEM *lista_seq_remover(LISTA_SEQ *e) {
     if (!e || !e->quantidade) return NULL;
     ITEM *item = e->itens[0];
     e->quantidade--;
-    memmove(e->itens, e->itens+1, e->quantidade*sizeof *e->itens);
+    memmove(e->itens, e->itens + 1, e->quantidade * sizeof *e->itens);
     return item;
 }
 
 bool lista_seq_percorrer(const LISTA_SEQ *e, VISITA visitar, void *contexto) {
 
     if (!e || !visitar) return false;
-    for (size_t i=0;i<e->quantidade;i++) if (!visitar(e->itens[i],contexto)) return false;
+    for (size_t i = 0; i < e->quantidade; i++) if (!visitar(e->itens[i], contexto)) return false;
     return true;
 }
 

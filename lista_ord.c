@@ -1,5 +1,6 @@
 #include "lista_ord.h"
 #include <stdlib.h>
+
 typedef struct no { ITEM *item; struct no *proximo; } NO;
 
 struct lista_ord { NO *inicio, *fim; const CONSULTA *consulta; };
@@ -11,6 +12,7 @@ LISTA_ORD *lista_ord_criar(const CONSULTA *consulta) {
     
     return e;
 }
+
 bool lista_ord_inserir(LISTA_ORD *e, ITEM *item) {
     if (!e || !item) return false;
     NO *novo = malloc(sizeof *novo);
@@ -25,6 +27,7 @@ bool lista_ord_inserir(LISTA_ORD *e, ITEM *item) {
     if (!novo->proximo) e->fim = novo;
     return true;
 }
+
 ITEM *lista_ord_remover(LISTA_ORD *e) {
 
     if (!e || !e->inicio) return NULL;
